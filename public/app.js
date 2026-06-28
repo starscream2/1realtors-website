@@ -52,7 +52,6 @@ function openModal(propertyId) {
   const prop = properties.find(p => p.id === propertyId);
   if (!prop) return;
 
-  const imagesList = prop.image.split(',');
   const sizeFeatureHtml = prop.size ? `
     <div class="modal-feature-item">
       <i class="fa-solid fa-ruler-combined"></i>
@@ -62,16 +61,7 @@ function openModal(propertyId) {
 
   const modalBody = modal.querySelector('.modal-body');
   modalBody.innerHTML = `
-    <div class="modal-gallery">
-      <img id="modal-main-img" src="${imagesList[0]}" alt="${prop.title}">
-      ${imagesList.length > 1 ? `
-      <div class="modal-thumbnails">
-        ${imagesList.map((imgUrl, idx) => `
-          <img src="${imgUrl}" alt="Thumbnail ${idx+1}" class="thumb-img ${idx === 0 ? 'active' : ''}" onclick="changeModalImage(this, '${imgUrl}')">
-        `).join('')}
-      </div>
-      ` : ''}
-    </div>
+    <img src="${prop.image}" alt="${prop.title}">
     <h3>${prop.title}</h3>
     <div class="price">${prop.priceStr}</div>
     <div class="card-location"><i class="fa-solid fa-location-dot"></i> ${prop.location}</div>
@@ -95,13 +85,6 @@ function openModal(propertyId) {
   modal.classList.add('open');
   modal.setAttribute('aria-hidden', 'false');
 }
-
-// Global helper to switch main modal image
-window.changeModalImage = function(el, url) {
-  document.getElementById('modal-main-img').src = url;
-  document.querySelectorAll('.thumb-img').forEach(img => img.classList.remove('active'));
-  el.classList.add('active');
-};
 
 function closeModal() {
   modal.classList.remove('open');
@@ -136,9 +119,6 @@ function renderProperties(list) {
   }
 
   list.forEach(prop => {
-    const imagesList = prop.image.split(',');
-    const thumbnail = imagesList[0] || 'images/luxury_villa.jpg';
-    
     // Category mapping
     const categoryLabel = prop.category === 'sale' ? 'For Sale' : prop.category === 'rental' ? 'For Rent' : 'Commercial';
 
@@ -149,7 +129,7 @@ function renderProperties(list) {
     card.className = 'property-card';
     card.innerHTML = `
       <div class="card-img-wrapper">
-        <img src="${thumbnail}" alt="${prop.title}" loading="lazy">
+        <img src="${prop.image}" alt="${prop.title}" loading="lazy">
         <span class="card-badge">${categoryLabel}</span>
       </div>
       <div class="card-content">

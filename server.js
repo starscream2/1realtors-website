@@ -154,19 +154,19 @@ app.post('/api/inquiry', async (req, res) => {
 });
 
 // POST endpoint to add a new property listing (Admin Dashboard upload)
-app.post('/api/admin/add-property', upload.array('images', 10), async (req, res) => {
+app.post('/api/admin/add-property', upload.single('image'), async (req, res) => {
   const { title, category, price, location, beds, baths, size, description, passcode, currency } = req.body;
-  const files = req.files;
+  const file = req.file;
 
   // Simple authentication check
   if (passcode !== 'realtors123') {
-    if (files) files.forEach(f => fsSync.unlinkSync(f.path));
+    if (file) fsSync.unlinkSync(file.path);
     return res.status(401).json({ success: false, error: 'Unauthorized: Incorrect passcode' });
   }
 
-  if (!title || !category || !price || !location || !beds || !baths || !description || !files || files.length === 0) {
-    if (files) files.forEach(f => fsSync.unlinkSync(f.path));
-    return res.status(400).json({ success: false, error: 'Missing required fields or images' });
+  if (!title || !category || !price || !location || !beds || !baths || !description || !file) {
+    if (file) fsSync.unlinkSync(file.path);
+    return res.status(400).json({ success: false, error: 'Missing required fields or image file' });
   }
 
   try {
@@ -175,41 +175,35 @@ app.post('/api/admin/add-property', upload.array('images', 10), async (req, res)
     const drive = google.drive({ version: 'v3', auth });
     const sheets = google.sheets({ version: 'v4', auth });
 
-    const imageUrls = [];
+    // 1. Upload photo to Google Drive
+    console.log("Uploading file to Google Drive...");
+    const fileMetadata = {
+      name: `${title.replace(/\s+/g, '_')}_${Date.now()}${path.extname(file.originalname)}`,
+      parents: [config.folderId],
+    };
+    const media = {
+      mimeType: file.mimetype,
+      body: fsSync.createReadStream(file.path),
+    };
+    const driveRes = await drive.files.create({
+      requestBody: fileMetadata,
+      media: media,
+      fields: 'id',
+    });
+    const fileId = driveRes.data.id;
+    console.log(`Uploaded photo. File ID: ${fileId}`);
 
-    // 1. Upload photos to Google Drive
-    for (const file of files) {
-      console.log(`Uploading file ${file.originalname} to Google Drive...`);
-      const fileMetadata = {
-        name: `${title.replace(/\s+/g, '_')}_${Date.now()}${path.extname(file.originalname)}`,
-        parents: [config.folderId],
-      };
-      const media = {
-        mimeType: file.mimetype,
-        body: fsSync.createReadStream(file.path),
-      };
-      const driveRes = await drive.files.create({
-        requestBody: fileMetadata,
-        media: media,
-        fields: 'id',
-      });
-      const fileId = driveRes.data.id;
-      console.log(`Uploaded photo. File ID: ${fileId}`);
+    // 2. Make the file public so anyone can view/access the image url
+    await drive.permissions.create({
+      fileId: fileId,
+      requestBody: {
+        role: 'reader',
+        type: 'anyone',
+      },
+    });
 
-      // 2. Make the file public so anyone can view/access the image url
-      await drive.permissions.create({
-        fileId: fileId,
-        requestBody: {
-          role: 'reader',
-          type: 'anyone',
-        },
-      });
-
-      // 3. Create direct download link for Google Drive image
-      imageUrls.push(`https://lh3.googleusercontent.com/d/${fileId}`);
-    }
-
-    const imageUrlsStr = imageUrls.join(',');
+    // 3. Create direct download link for Google Drive image
+    const imageUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
 
     // 4. Retrieve current listings to determine next incremental ID
     const currentRowsRes = await sheets.spreadsheets.values.get({
@@ -230,7 +224,7 @@ app.post('/api/admin/add-property', upload.array('images', 10), async (req, res)
       parseInt(beds),
       parseFloat(baths),
       size ? parseInt(size) : '', // Optional Size
-      imageUrlsStr,
+      imageUrl,
       description,
       currency || 'TTD' // Column K: Currency
     ];
@@ -243,12 +237,12 @@ app.post('/api/admin/add-property', upload.array('images', 10), async (req, res)
       },
     });
 
-    // 6. Clean up temporary uploaded files from local server
-    files.forEach(f => fsSync.unlinkSync(f.path));
-    res.json({ success: true, message: 'Property listing and photos uploaded successfully to Google Sheets/Drive!' });
+    // 6. Clean up temporary uploaded file from local server
+    fsSync.unlinkSync(file.path);
+    res.json({ success: true, message: 'Property listing and photo uploaded successfully to Google Sheets/Drive!' });
   } catch (error) {
     console.error("Admin listing creation failed:", error);
-    if (files) files.forEach(f => { try { fsSync.unlinkSync(f.path); } catch (e) {} });
+    if (file) fsSync.unlinkSync(file.path);
     res.status(500).json({ success: false, error: 'Database upload failed. Check server logs.' });
   }
 });

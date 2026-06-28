@@ -13,8 +13,27 @@ async function run() {
     const drive = google.drive({ version: 'v3', auth });
     const sheets = google.sheets({ version: 'v4', auth });
 
-    const folderId = '1suWSmShsqcIy2z3LPPU4mR5R58mYXhaW';
-    console.log(`Using existing Drive folder ID: ${folderId}`);
+    console.log("1. Creating Google Drive folder for property photos...");
+    const folderMetadata = {
+      name: '1 Realtors Website Photos',
+      mimeType: 'application/vnd.google-apps.folder',
+    };
+    const folderRes = await drive.files.create({
+      resource: folderMetadata,
+      fields: 'id, webViewLink',
+    });
+    const folderId = folderRes.data.id;
+    console.log(`Folder created successfully! ID: ${folderId}`);
+
+    console.log("2. Making the photos folder public (viewable by anyone with link)...");
+    await drive.permissions.create({
+      fileId: folderId,
+      requestBody: {
+        role: 'reader',
+        type: 'anyone',
+      },
+    });
+    console.log("Folder sharing updated to public.");
 
     console.log("3. Creating Google Sheet for listings database...");
     const sheetRes = await sheets.spreadsheets.create({

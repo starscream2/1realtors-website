@@ -232,6 +232,11 @@ app.post('/api/admin/add-property', upload.single('image'), async (req, res) => 
   }
 });
 
+// Serve admin dashboard
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
 // Fallback to index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));

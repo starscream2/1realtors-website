@@ -158,18 +158,18 @@ h2 {
 }
 
 .logo {
-  font-family: var(--font-body);
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: var(--color-primary);
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  letter-spacing: -0.5px;
 }
 
-.logo-text-red {
-  color: var(--color-accent);
+.logo img {
+  height: 60px;
+  width: auto;
+  transition: height var(--transition-fast);
+}
+
+#main-header.scrolled .logo img {
+  height: 50px;
 }
 
 .nav-links {

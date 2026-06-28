@@ -193,27 +193,74 @@ function filterProperties(category = 'all', maxPrice = 'any', searchType = 'all'
   renderProperties(filtered);
 }
 
+// Function to update price filter options dynamically based on property category
+function updatePriceFilterOptions(type) {
+  priceFilter.innerHTML = '';
+  
+  const anyOption = document.createElement('option');
+  anyOption.value = 'any';
+  anyOption.textContent = 'Any Price';
+  priceFilter.appendChild(anyOption);
+  
+  if (type === 'rental') {
+    const options = [
+      { value: '3000', text: 'Under $3,000' },
+      { value: '5000', text: 'Under $5,000' },
+      { value: '10000', text: 'Under $10,000' },
+      { value: '15000', text: 'Under $15,000' }
+    ];
+    options.forEach(opt => {
+      const el = document.createElement('option');
+      el.value = opt.value;
+      el.textContent = opt.text;
+      priceFilter.appendChild(el);
+    });
+  } else {
+    const options = [
+      { value: '500000', text: 'Under $500,000' },
+      { value: '1000000', text: 'Under $1.0M' },
+      { value: '2500000', text: 'Under $2.5M' },
+      { value: '5000000', text: 'Under $5.0M' }
+    ];
+    options.forEach(opt => {
+      const el = document.createElement('option');
+      el.value = opt.value;
+      el.textContent = opt.text;
+      priceFilter.appendChild(el);
+    });
+  }
+}
+
+// Event listener for type dropdown change
+typeFilter.addEventListener('change', () => {
+  updatePriceFilterOptions(typeFilter.value);
+});
+
 // Event Listeners for Category Tabs
 filterTabs.forEach(tab => {
   tab.addEventListener('click', (e) => {
     filterTabs.forEach(btn => btn.classList.remove('active'));
     tab.classList.add('active');
     
-    // Clear search bar dropdowns to make filtering intuitive
-    typeFilter.value = 'all';
+    const category = tab.getAttribute('data-filter');
+    typeFilter.value = category;
+    updatePriceFilterOptions(category);
     priceFilter.value = 'any';
     
-    filterProperties(tab.getAttribute('data-filter'));
+    filterProperties(category, 'any', 'all');
   });
 });
 
 // Event Listener for Search Bar button
 searchBtn.addEventListener('click', () => {
-  // Clear tab active state (set to all)
+  const selectedType = typeFilter.value;
   filterTabs.forEach(btn => btn.classList.remove('active'));
-  document.querySelector('[data-filter="all"]').classList.add('active');
+  const matchingTab = document.querySelector(`[data-filter="${selectedType}"]`);
+  if (matchingTab) {
+    matchingTab.classList.add('active');
+  }
   
-  filterProperties('all', priceFilter.value, typeFilter.value);
+  filterProperties(selectedType, priceFilter.value, 'all');
 });
 
 // --- Populate Contact Form Dropdown ---

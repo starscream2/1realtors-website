@@ -113,8 +113,8 @@ app.get('/api/properties', async (req, res) => {
         price: priceVal, // Send the parsed numeric value for filter comparisons
         priceStr: displayPrice,
         location: row[4] || 'Unknown Location',
-        beds: parseInt(row[5]) || 0,
-        baths: parseFloat(row[6]) || 0,
+        beds: row[5] ? parseInt(row[5]) : null,
+        baths: row[6] ? parseFloat(row[6]) : null,
         size: row[7] ? parseInt(row[7]) : null, // Optional Size
         image: row[8] || '',
         description: row[9] || 'No description available.'
@@ -194,7 +194,7 @@ app.post('/api/admin/add-property', upload.single('image'), async (req, res) => 
     return res.status(401).json({ success: false, error: 'Unauthorized: Incorrect passcode' });
   }
 
-  if (!title || !category || !price || !location || !beds || !baths || !description || !file) {
+  if (!title || !category || !price || !location || !description || !file) {
     if (file) fsSync.unlinkSync(file.path);
     return res.status(400).json({ success: false, error: 'Missing required fields or image file' });
   }
@@ -251,8 +251,8 @@ app.post('/api/admin/add-property', upload.single('image'), async (req, res) => 
       category,
       price, // Store raw alphanumeric price string (e.g. "2.75 million")
       location,
-      parseInt(beds),
-      parseFloat(baths),
+      beds ? parseInt(beds) : '',
+      baths ? parseFloat(baths) : '',
       size ? parseInt(size) : '', // Optional Size
       imageUrl,
       description,

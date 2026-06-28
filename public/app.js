@@ -52,6 +52,20 @@ function openModal(propertyId) {
   const prop = properties.find(p => p.id === propertyId);
   if (!prop) return;
 
+  const bedsFeatureHtml = prop.beds ? `
+    <div class="modal-feature-item">
+      <i class="fa-solid fa-bed"></i>
+      <span>Bedrooms</span>
+      <strong>${prop.beds}</strong>
+    </div>` : '';
+
+  const bathsFeatureHtml = prop.baths ? `
+    <div class="modal-feature-item">
+      <i class="fa-solid fa-bath"></i>
+      <span>Bathrooms</span>
+      <strong>${prop.baths}</strong>
+    </div>` : '';
+
   const sizeFeatureHtml = prop.size ? `
     <div class="modal-feature-item">
       <i class="fa-solid fa-ruler-combined"></i>
@@ -66,16 +80,8 @@ function openModal(propertyId) {
     <div class="price">${prop.priceStr}</div>
     <div class="card-location"><i class="fa-solid fa-location-dot"></i> ${prop.location}</div>
     <div class="modal-features">
-      <div class="modal-feature-item">
-        <i class="fa-solid fa-bed"></i>
-        <span>Bedrooms</span>
-        <strong>${prop.beds}</strong>
-      </div>
-      <div class="modal-feature-item">
-        <i class="fa-solid fa-bath"></i>
-        <span>Bathrooms</span>
-        <strong>${prop.baths}</strong>
-      </div>
+      ${bedsFeatureHtml}
+      ${bathsFeatureHtml}
       ${sizeFeatureHtml}
     </div>
     <p class="desc">${prop.description}</p>
@@ -125,6 +131,10 @@ function renderProperties(list) {
     // Optional Size
     const sizeStr = prop.size ? `<span><i class="fa-solid fa-ruler-combined"></i> ${prop.size} sqft</span>` : '';
 
+    // Optional beds and baths
+    const bedsStr = prop.beds ? `<span><i class="fa-solid fa-bed"></i> ${prop.beds} Beds</span>` : '';
+    const bathsStr = prop.baths ? `<span><i class="fa-solid fa-bath"></i> ${prop.baths} Baths</span>` : '';
+
     const card = document.createElement('article');
     card.className = 'property-card';
     card.innerHTML = `
@@ -137,8 +147,8 @@ function renderProperties(list) {
         <h3 class="card-title">${prop.title}</h3>
         <div class="card-location"><i class="fa-solid fa-location-dot"></i> ${prop.location}</div>
         <div class="card-details">
-          <span><i class="fa-solid fa-bed"></i> ${prop.beds} Beds</span>
-          <span><i class="fa-solid fa-bath"></i> ${prop.baths} Baths</span>
+          ${bedsStr}
+          ${bathsStr}
           ${sizeStr}
         </div>
       </div>

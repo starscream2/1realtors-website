@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Discover premium real estate, modern luxury villas, penthouses, and family homes. Contact us today to find your dream property.">
+  <title>1 Realtors | Exclusive Real Estate & Luxury Homes</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header / Navigation -->
+  <header id="main-header">
+    <div class="container nav-container">
+      <a href="#" class="logo">
+        <span class="logo-accent">1</span> Realtors
+      </a>
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li><a href="#home" class="active">Home</a></li>
+          <li><a href="#properties">Properties</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact" class="btn-primary-outline">Contact Us</a></li>
+        </ul>
+      </nav>
+      <button class="mobile-nav-toggle" aria-label="Toggle Menu" aria-expanded="false">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="home" class="hero">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+      <h1 class="hero-title animate-up">Exclusive Living,<br><span class="highlight">Redefined.</span></h1>
+      <p class="hero-subtitle animate-up-delayed">Discover custom architectural masterpieces, curated luxury apartments, and premium family estates.</p>
+      
+      <!-- Search/Filter Bar -->
+      <div class="search-bar animate-up-delayed-more">
+        <div class="search-field">
+          <label for="filter-type"><i class="fa-solid fa-house"></i> Property Type</label>
+          <select id="filter-type">
+            <option value="all">All Properties</option>
+            <option value="villa">Luxury Villas</option>
+            <option value="apartment">Penthouses</option>
+            <option value="house">Family Homes</option>
+          </select>
+        </div>
+        <div class="search-field">
+          <label for="filter-price"><i class="fa-solid fa-tag"></i> Max Price</label>
+          <select id="filter-price">
+            <option value="any">Any Price</option>
+            <option value="1000000">Under $1.0M</option>
+            <option value="2500000">Under $2.5M</option>
+            <option value="5000000">Under $5.0M</option>
+          </select>
+        </div>
+        <button id="search-btn" class="btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Properties -->
+  <section id="properties" class="properties-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="sub-title">Our Collection</span>
+        <h2>Featured Properties</h2>
+        <p>Carefully handpicked listings matching the highest standards of luxury and design.</p>
+      </div>
+
+      <!-- Categories Filter Tabs -->
+      <div class="filter-tabs">
+        <button class="tab-btn active" data-filter="all">All</button>
+        <button class="tab-btn" data-filter="villa">Villas</button>
+        <button class="tab-btn" data-filter="apartment">Penthouses</button>
+        <button class="tab-btn" data-filter="house">Houses</button>
+      </div>
+
+      <!-- Properties Grid -->
+      <div id="properties-grid" class="grid-layout">
+        <!-- Dynamically loaded properties will go here -->
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="about-section">
+    <div class="container about-grid">
+      <div class="about-image-wrapper">
+        <img src="images/luxury_villa.jpg" alt="Luxury home exterior" class="about-img">
+        <div class="experience-badge">
+          <span class="exp-years">10+</span>
+          <span class="exp-text">Years of<br>Excellence</span>
+        </div>
+      </div>
+      <div class="about-content">
+        <span class="sub-title">About 1 Realtors</span>
+        <h2>Connecting Clients to Extraordinary Lifestyles</h2>
+        <p>At 1 Realtors, we believe that a home is more than just a place to live—it is a reflection of your personality, goals, and values. We curate high-end listings that blend aesthetic elegance with ultimate comfort.</p>
+        <p>Our direct connections and automated client inquiry channels ensure a smooth transaction process from initial virtual viewing to closing day.</p>
+        
+        <div class="features-list">
+          <div class="feature-item">
+            <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="feature-info">
+              <h3>Trusted Advisory</h3>
+              <p>Tailored guidance based on local market intelligence.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon"><i class="fa-solid fa-bolt"></i></div>
+            <div class="feature-info">
+              <h3>Instant Inquiry Routing</h3>
+              <p>Directly notifies us via automated WhatsApp and Email integrations.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact/Inquiry Section -->
+  <section id="contact" class="contact-section">
+    <div class="container contact-grid">
+      <div class="contact-info">
+        <span class="sub-title">Let's Connect</span>
+        <h2>Interested in a Property?</h2>
+        <p>Schedule a private viewing, ask a question about a specific listing, or speak with an agent. Fill out the form and our integration will dispatch the details immediately to our active agents.</p>
+        
+        <div class="contact-details">
+          <div class="contact-detail-item">
+            <i class="fa-solid fa-phone"></i>
+            <div>
+              <h3>Call/WhatsApp</h3>
+              <p>1-868-689-8367</p>
+            </div>
+          </div>
+          <div class="contact-detail-item">
+            <i class="fa-solid fa-envelope"></i>
+            <div>
+              <h3>Email</h3>
+              <p>Avi.1realtors@gmail.com</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form-card">
+        <form id="inquiry-form">
+          <div class="form-group">
+            <label for="form-property">Select Property</label>
+            <select id="form-property" required>
+              <option value="" disabled selected>Choose a property...</option>
+              <!-- Pre-filled via JavaScript -->
+            </select>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="form-name">Your Name</label>
+              <input type="text" id="form-name" required placeholder="John Doe">
+            </div>
+            <div class="form-group">
+              <label for="form-phone">Phone Number</label>
+              <input type="tel" id="form-phone" placeholder="+1 (555) 000-0000">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="form-email">Email Address</label>
+            <input type="email" id="form-email" required placeholder="john@example.com">
+          </div>
+
+          <div class="form-group">
+            <label for="form-message">Your Message</label>
+            <textarea id="form-message" rows="4" required placeholder="I would like to schedule a viewing for..."></textarea>
+          </div>
+
+          <button type="submit" id="submit-btn" class="btn-primary btn-full">
+            <span>Send Inquiry</span>
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </form>
+        <div id="form-status" class="form-status hidden"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Property Detail Modal -->
+  <div id="property-modal" class="modal" aria-hidden="true" role="dialog">
+    <div class="modal-content">
+      <button class="close-modal" aria-label="Close details">&times;</button>
+      <div class="modal-body">
+        <!-- Populated via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <h3><span class="logo-accent">1</span> Realtors</h3>
+        <p>Premium real estate experiences and bespoke luxury property services.</p>
+      </div>
+      <div class="footer-socials">
+        <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+        <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 1 Realtors. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

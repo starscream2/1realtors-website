@@ -1,0 +1,13 @@
+{
+  "name": "real-estate-website",
+  "version": "1.0.0",
+  "description": "Premium real estate landing page with inquiry notifications",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "googleapis": "^122.0.0"
+  }
+}

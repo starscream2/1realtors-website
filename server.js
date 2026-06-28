@@ -95,10 +95,13 @@ app.get('/api/properties', async (req, res) => {
       
       let displayPrice = rawPrice;
       if (!displayPrice.includes('$')) {
-        // If it's a plain number (e.g. "12000"), format it with commas
-        const cleanNum = parseFloat(displayPrice.replace(/,/g, ''));
-        if (!isNaN(cleanNum)) {
-          displayPrice = cleanNum.toLocaleString();
+        // Check if the price is a pure number (does not contain letters)
+        const hasLetters = /[a-zA-Z]/.test(displayPrice);
+        if (!hasLetters) {
+          const cleanNum = parseFloat(displayPrice.replace(/,/g, ''));
+          if (!isNaN(cleanNum)) {
+            displayPrice = cleanNum.toLocaleString();
+          }
         }
         displayPrice = `${currency} $${displayPrice}`;
       }

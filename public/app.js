@@ -196,6 +196,7 @@ function filterProperties(category = 'all', maxPrice = 'any', searchType = 'all'
 // Function to update price filter options dynamically based on property category
 function updatePriceFilterOptions(type) {
   priceFilter.innerHTML = '';
+  priceFilter.disabled = false;
   
   const anyOption = document.createElement('option');
   anyOption.value = 'any';
@@ -204,10 +205,9 @@ function updatePriceFilterOptions(type) {
   
   if (type === 'rental') {
     const options = [
-      { value: '3000', text: 'Under $3,000' },
-      { value: '5000', text: 'Under $5,000' },
       { value: '10000', text: 'Under $10,000' },
-      { value: '15000', text: 'Under $15,000' }
+      { value: '15000', text: 'Under $15,000' },
+      { value: '30000', text: 'Under $30,000' }
     ];
     options.forEach(opt => {
       const el = document.createElement('option');
@@ -215,12 +215,13 @@ function updatePriceFilterOptions(type) {
       el.textContent = opt.text;
       priceFilter.appendChild(el);
     });
+  } else if (type === 'commercial') {
+    priceFilter.disabled = true; // No price filter needed for commercial
   } else {
     const options = [
-      { value: '500000', text: 'Under $500,000' },
-      { value: '1000000', text: 'Under $1.0M' },
-      { value: '2500000', text: 'Under $2.5M' },
-      { value: '5000000', text: 'Under $5.0M' }
+      { value: '2000000', text: 'Under $2.0M' },
+      { value: '5000000', text: 'Under $5.0M' },
+      { value: '10000000', text: 'Under $10.0M' }
     ];
     options.forEach(opt => {
       const el = document.createElement('option');
@@ -341,4 +342,5 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   renderProperties(properties);
   populateDropdown();
+  updatePriceFilterOptions('all');
 });

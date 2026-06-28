@@ -275,7 +275,7 @@ inquiryForm.addEventListener('submit', async (e) => {
     
     if (response.ok && result.success) {
       formStatus.className = 'form-status success';
-      formStatus.textContent = 'Thank you! Your inquiry was sent. Our agents have been notified via Email/WhatsApp.';
+      formStatus.textContent = 'Thank you! Your inquiry was sent. Our agents have been notified via Email.';
       inquiryForm.reset();
     } else {
       throw new Error(result.error || 'Failed to submit inquiry.');

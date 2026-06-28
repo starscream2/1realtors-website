@@ -52,9 +52,26 @@ function openModal(propertyId) {
   const prop = properties.find(p => p.id === propertyId);
   if (!prop) return;
 
+  const imagesList = prop.image.split(',');
+  const sizeFeatureHtml = prop.size ? `
+    <div class="modal-feature-item">
+      <i class="fa-solid fa-ruler-combined"></i>
+      <span>Area (Sq Ft)</span>
+      <strong>${prop.size}</strong>
+    </div>` : '';
+
   const modalBody = modal.querySelector('.modal-body');
   modalBody.innerHTML = `
-    <img src="${prop.image}" alt="${prop.title}">
+    <div class="modal-gallery">
+      <img id="modal-main-img" src="${imagesList[0]}" alt="${prop.title}">
+      ${imagesList.length > 1 ? `
+      <div class="modal-thumbnails">
+        ${imagesList.map((imgUrl, idx) => `
+          <img src="${imgUrl}" alt="Thumbnail ${idx+1}" class="thumb-img ${idx === 0 ? 'active' : ''}" onclick="changeModalImage(this, '${imgUrl}')">
+        `).join('')}
+      </div>
+      ` : ''}
+    </div>
     <h3>${prop.title}</h3>
     <div class="price">${prop.priceStr}</div>
     <div class="card-location"><i class="fa-solid fa-location-dot"></i> ${prop.location}</div>
@@ -69,11 +86,7 @@ function openModal(propertyId) {
         <span>Bathrooms</span>
         <strong>${prop.baths}</strong>
       </div>
-      <div class="modal-feature-item">
-        <i class="fa-solid fa-ruler-combined"></i>
-        <span>Area (Sq Ft)</span>
-        <strong>${prop.size}</strong>
-      </div>
+      ${sizeFeatureHtml}
     </div>
     <p class="desc">${prop.description}</p>
     <button onclick="inquireForProperty('${prop.title}')" class="btn-primary btn-full">Inquire About This Property</button>
@@ -82,6 +95,13 @@ function openModal(propertyId) {
   modal.classList.add('open');
   modal.setAttribute('aria-hidden', 'false');
 }
+
+// Global helper to switch main modal image
+window.changeModalImage = function(el, url) {
+  document.getElementById('modal-main-img').src = url;
+  document.querySelectorAll('.thumb-img').forEach(img => img.classList.remove('active'));
+  el.classList.add('active');
+};
 
 function closeModal() {
   modal.classList.remove('open');
@@ -116,12 +136,21 @@ function renderProperties(list) {
   }
 
   list.forEach(prop => {
+    const imagesList = prop.image.split(',');
+    const thumbnail = imagesList[0] || 'images/luxury_villa.jpg';
+    
+    // Category mapping
+    const categoryLabel = prop.category === 'sale' ? 'For Sale' : prop.category === 'rental' ? 'For Rent' : 'Commercial';
+
+    // Optional Size
+    const sizeStr = prop.size ? `<span><i class="fa-solid fa-ruler-combined"></i> ${prop.size} sqft</span>` : '';
+
     const card = document.createElement('article');
     card.className = 'property-card';
     card.innerHTML = `
       <div class="card-img-wrapper">
-        <img src="${prop.image}" alt="${prop.title}" loading="lazy">
-        <span class="card-badge">${prop.category === 'villa' ? 'Villa' : prop.category === 'apartment' ? 'Penthouse' : 'House'}</span>
+        <img src="${thumbnail}" alt="${prop.title}" loading="lazy">
+        <span class="card-badge">${categoryLabel}</span>
       </div>
       <div class="card-content">
         <div class="card-price">${prop.priceStr}</div>
@@ -130,7 +159,7 @@ function renderProperties(list) {
         <div class="card-details">
           <span><i class="fa-solid fa-bed"></i> ${prop.beds} Beds</span>
           <span><i class="fa-solid fa-bath"></i> ${prop.baths} Baths</span>
-          <span><i class="fa-solid fa-ruler-combined"></i> ${prop.size} sqft</span>
+          ${sizeStr}
         </div>
       </div>
       <div class="card-footer">

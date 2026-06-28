@@ -916,3 +916,40 @@ footer {
     flex: 1 1 100%;
   }
 }
+
+/* --- Modal Image Gallery & Thumbnails --- */
+.modal-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.modal-gallery img {
+  margin-bottom: 0 !important; /* Override default margin */
+}
+
+.modal-thumbnails {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+
+.thumb-img {
+  width: 75px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  opacity: 0.6;
+  border: 2px solid transparent;
+  transition: var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.thumb-img:hover,
+.thumb-img.active {
+  opacity: 1;
+  border-color: var(--color-accent);
+}

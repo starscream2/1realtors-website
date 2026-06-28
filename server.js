@@ -65,7 +65,7 @@ app.get('/api/properties', async (req, res) => {
 
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: config.spreadsheetId,
-      range: 'Sheet1!A2:J', // Skip headers
+      range: 'Sheet1!A2:K', // Skip headers, read through Column K (Currency)
     });
 
     const rows = response.data.values;
@@ -73,19 +73,23 @@ app.get('/api/properties', async (req, res) => {
       return res.json([]);
     }
 
-    const properties = rows.map(row => ({
-      id: parseInt(row[0]),
-      title: row[1] || 'No Title',
-      category: row[2] || 'house',
-      price: parseInt(row[3]) || 0,
-      priceStr: `$${(parseInt(row[3]) || 0).toLocaleString()}`,
-      location: row[4] || 'Unknown Location',
-      beds: parseInt(row[5]) || 0,
-      baths: parseFloat(row[6]) || 0,
-      size: parseInt(row[7]) || 0,
-      image: row[8] || '',
-      description: row[9] || 'No description available.'
-    }));
+    const properties = rows.map(row => {
+      const currency = row[10] || 'TTD';
+      const priceVal = parseInt(row[3]) || 0;
+      return {
+        id: parseInt(row[0]),
+        title: row[1] || 'No Title',
+        category: row[2] || 'house',
+        price: priceVal,
+        priceStr: `${currency} $${priceVal.toLocaleString()}`,
+        location: row[4] || 'Unknown Location',
+        beds: parseInt(row[5]) || 0,
+        baths: parseFloat(row[6]) || 0,
+        size: row[7] ? parseInt(row[7]) : null, // Optional Size
+        image: row[8] || '',
+        description: row[9] || 'No description available.'
+      };
+    });
 
     res.json(properties);
   } catch (error) {
@@ -150,19 +154,19 @@ app.post('/api/inquiry', async (req, res) => {
 });
 
 // POST endpoint to add a new property listing (Admin Dashboard upload)
-app.post('/api/admin/add-property', upload.single('image'), async (req, res) => {
-  const { title, category, price, location, beds, baths, size, description, passcode } = req.body;
-  const file = req.file;
+app.post('/api/admin/add-property', upload.array('images', 10), async (req, res) => {
+  const { title, category, price, location, beds, baths, size, description, passcode, currency } = req.body;
+  const files = req.files;
 
   // Simple authentication check
   if (passcode !== 'realtors123') {
-    if (file) fsSync.unlinkSync(file.path);
+    if (files) files.forEach(f => fsSync.unlinkSync(f.path));
     return res.status(401).json({ success: false, error: 'Unauthorized: Incorrect passcode' });
   }
 
-  if (!title || !category || !price || !location || !beds || !baths || !size || !description || !file) {
-    if (file) fsSync.unlinkSync(file.path);
-    return res.status(400).json({ success: false, error: 'Missing required fields or image file' });
+  if (!title || !category || !price || !location || !beds || !baths || !description || !files || files.length === 0) {
+    if (files) files.forEach(f => fsSync.unlinkSync(f.path));
+    return res.status(400).json({ success: false, error: 'Missing required fields or images' });
   }
 
   try {
@@ -171,35 +175,41 @@ app.post('/api/admin/add-property', upload.single('image'), async (req, res) => 
     const drive = google.drive({ version: 'v3', auth });
     const sheets = google.sheets({ version: 'v4', auth });
 
-    // 1. Upload photo to Google Drive
-    console.log("Uploading file to Google Drive...");
-    const fileMetadata = {
-      name: `${title.replace(/\s+/g, '_')}_${Date.now()}${path.extname(file.originalname)}`,
-      parents: [config.folderId],
-    };
-    const media = {
-      mimeType: file.mimetype,
-      body: fsSync.createReadStream(file.path),
-    };
-    const driveRes = await drive.files.create({
-      requestBody: fileMetadata,
-      media: media,
-      fields: 'id',
-    });
-    const fileId = driveRes.data.id;
-    console.log(`Uploaded photo. File ID: ${fileId}`);
+    const imageUrls = [];
 
-    // 2. Make the file public so anyone can view/access the image url
-    await drive.permissions.create({
-      fileId: fileId,
-      requestBody: {
-        role: 'reader',
-        type: 'anyone',
-      },
-    });
+    // 1. Upload photos to Google Drive
+    for (const file of files) {
+      console.log(`Uploading file ${file.originalname} to Google Drive...`);
+      const fileMetadata = {
+        name: `${title.replace(/\s+/g, '_')}_${Date.now()}${path.extname(file.originalname)}`,
+        parents: [config.folderId],
+      };
+      const media = {
+        mimeType: file.mimetype,
+        body: fsSync.createReadStream(file.path),
+      };
+      const driveRes = await drive.files.create({
+        requestBody: fileMetadata,
+        media: media,
+        fields: 'id',
+      });
+      const fileId = driveRes.data.id;
+      console.log(`Uploaded photo. File ID: ${fileId}`);
 
-    // 3. Create direct download link for Google Drive image
-    const imageUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
+      // 2. Make the file public so anyone can view/access the image url
+      await drive.permissions.create({
+        fileId: fileId,
+        requestBody: {
+          role: 'reader',
+          type: 'anyone',
+        },
+      });
+
+      // 3. Create direct download link for Google Drive image
+      imageUrls.push(`https://lh3.googleusercontent.com/d/${fileId}`);
+    }
+
+    const imageUrlsStr = imageUrls.join(',');
 
     // 4. Retrieve current listings to determine next incremental ID
     const currentRowsRes = await sheets.spreadsheets.values.get({
@@ -210,24 +220,35 @@ app.post('/api/admin/add-property', upload.single('image'), async (req, res) => 
     const nextId = currentRows.length + 1;
 
     // 5. Append new property row to Google Sheets
+    // Columns: ID, Title, Category, Price, Location, Beds, Baths, Size, ImageURL, Description, Currency
     const newRow = [
-      nextId, title, category, parseInt(price), location, parseInt(beds), parseFloat(baths), parseInt(size), imageUrl, description
+      nextId,
+      title,
+      category,
+      parseInt(price),
+      location,
+      parseInt(beds),
+      parseFloat(baths),
+      size ? parseInt(size) : '', // Optional Size
+      imageUrlsStr,
+      description,
+      currency || 'TTD' // Column K: Currency
     ];
     await sheets.spreadsheets.values.append({
       spreadsheetId: config.spreadsheetId,
       range: 'Sheet1!A2',
       valueInputOption: 'RAW',
-      resource: {
+      requestBody: {
         values: [newRow],
       },
     });
 
-    // 6. Clean up temporary uploaded file from local server
-    fsSync.unlinkSync(file.path);
-    res.json({ success: true, message: 'Property listing and photo uploaded successfully to Google Sheets/Drive!' });
+    // 6. Clean up temporary uploaded files from local server
+    files.forEach(f => fsSync.unlinkSync(f.path));
+    res.json({ success: true, message: 'Property listing and photos uploaded successfully to Google Sheets/Drive!' });
   } catch (error) {
     console.error("Admin listing creation failed:", error);
-    if (file) fsSync.unlinkSync(file.path);
+    if (files) files.forEach(f => { try { fsSync.unlinkSync(f.path); } catch (e) {} });
     res.status(500).json({ success: false, error: 'Database upload failed. Check server logs.' });
   }
 });

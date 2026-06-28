@@ -232,6 +232,16 @@ app.post('/api/admin/add-property', upload.single('image'), async (req, res) => 
   }
 });
 
+// Serve spreadsheet URL for admin button
+app.get('/api/admin/sheet-url', async (req, res) => {
+  try {
+    const config = await getDbConfig();
+    res.json({ url: config.spreadsheetUrl });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get spreadsheet URL' });
+  }
+});
+
 // Serve admin dashboard
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));

@@ -93,6 +93,11 @@
       <div class="admin-header">
         <h1>Add New Property</h1>
         <p>Fill out the form below to upload a listing and photo directly to your Google Sheet database and Google Drive.</p>
+        <div style="margin-top: 1rem;">
+          <a id="sheet-link-btn" href="#" target="_blank" class="btn-primary-outline" style="font-size: 0.9rem; padding: 0.5rem 1rem;">
+            <i class="fa-solid fa-table"></i> Open Google Sheet Database
+          </a>
+        </div>
       </div>
 
       <form id="admin-upload-form" enctype="multipart/form-data">
@@ -221,6 +226,19 @@
       } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalText;
+      }
+    });
+
+    // Fetch spreadsheet URL on load
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch('/api/admin/sheet-url');
+        const data = await res.json();
+        if (data.url) {
+          document.getElementById('sheet-link-btn').href = data.url;
+        }
+      } catch (err) {
+        console.error("Failed to load sheet URL", err);
       }
     });
   </script>

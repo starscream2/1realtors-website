@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin Dashboard | 1 Realtors</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Admin specific styling overrides */
+    .admin-container {
+      max-width: 800px;
+      margin: 100px auto 50px auto;
+      padding: 2.5rem;
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(27, 38, 59, 0.05);
+    }
+    .admin-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(27, 38, 59, 0.08);
+    }
+    .admin-header h1 {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      color: var(--color-secondary);
+      margin-bottom: 0.5rem;
+    }
+    .admin-header p {
+      color: var(--color-text-muted);
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--color-accent);
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+    }
+    .form-group-file {
+      border: 2px dashed rgba(27, 38, 59, 0.15);
+      border-radius: var(--radius-sm);
+      padding: 1.5rem;
+      text-align: center;
+      background-color: var(--color-bg);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    .form-group-file:hover {
+      border-color: var(--color-accent);
+    }
+    .form-group-file input {
+      display: none;
+    }
+    .file-label-content i {
+      font-size: 2rem;
+      color: var(--color-accent);
+      margin-bottom: 10px;
+    }
+    .file-name-preview {
+      margin-top: 10px;
+      font-weight: 500;
+      color: var(--color-primary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header id="main-header" class="scrolled">
+    <div class="container nav-container">
+      <a href="/" class="logo">
+        <span class="logo-accent">1</span> Realtors
+      </a>
+      <a href="/" class="btn-primary-outline"><i class="fa-solid fa-arrow-left"></i> View Site</a>
+    </div>
+  </header>
+
+  <!-- Admin Panel Container -->
+  <main class="container">
+    <div class="admin-container">
+      <a href="/" class="back-btn"><i class="fa-solid fa-chevron-left"></i> Back to Home</a>
+      
+      <div class="admin-header">
+        <h1>Add New Property</h1>
+        <p>Fill out the form below to upload a listing and photo directly to your Google Sheet database and Google Drive.</p>
+      </div>
+
+      <form id="admin-upload-form" enctype="multipart/form-data">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="property-title">Property Title</label>
+            <input type="text" id="property-title" name="title" required placeholder="The Sunset Ridge Manor">
+          </div>
+          <div class="form-group">
+            <label for="property-category">Category</label>
+            <select id="property-category" name="category" required>
+              <option value="villa">Luxury Villa</option>
+              <option value="apartment">Penthouse</option>
+              <option value="house">Family Home</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="property-price">Price (USD)</label>
+            <input type="number" id="property-price" name="price" required placeholder="1850000">
+          </div>
+          <div class="form-group">
+            <label for="property-location">Location</label>
+            <input type="text" id="property-location" name="location" required placeholder="San Diego, California">
+          </div>
+        </div>
+
+        <div class="form-row" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="form-group">
+            <label for="property-beds">Bedrooms</label>
+            <input type="number" id="property-beds" name="beds" required placeholder="4">
+          </div>
+          <div class="form-group">
+            <label for="property-baths">Bathrooms</label>
+            <input type="number" step="0.5" id="property-baths" name="baths" required placeholder="3.5">
+          </div>
+          <div class="form-group">
+            <label for="property-size">Size (Sq Ft)</label>
+            <input type="number" id="property-size" name="size" required placeholder="4200">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Property Photo</label>
+          <div class="form-group-file" onclick="document.getElementById('property-image').click()">
+            <input type="file" id="property-image" name="image" accept="image/*" required>
+            <div class="file-label-content">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <p>Drag and drop or click to upload a photo</p>
+              <div id="file-preview-name" class="file-name-preview"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="property-description">Description</label>
+          <textarea id="property-description" name="description" rows="5" required placeholder="Describe the outstanding features of this property..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="admin-passcode">Admin Passcode</label>
+          <input type="password" id="admin-passcode" name="passcode" required placeholder="Enter passcode to authorize">
+        </div>
+
+        <button type="submit" id="admin-submit-btn" class="btn-primary btn-full" style="margin-top: 1rem;">
+          <span>Upload & Publish</span>
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+        </button>
+      </form>
+      <div id="admin-status" class="form-status hidden"></div>
+    </div>
+  </main>
+
+  <script>
+    // File upload preview name
+    const fileInput = document.getElementById('property-image');
+    const filePreview = document.getElementById('file-preview-name');
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length > 0) {
+        filePreview.textContent = `Selected: ${fileInput.files[0].name}`;
+      } else {
+        filePreview.textContent = '';
+      }
+    });
+
+    // Form Submission
+    const form = document.getElementById('admin-upload-form');
+    const statusDiv = document.getElementById('admin-status');
+    const submitBtn = document.getElementById('admin-submit-btn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Reset status
+      statusDiv.className = 'form-status hidden';
+      statusDiv.textContent = '';
+
+      // Disable button
+      submitBtn.disabled = true;
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<span>Uploading to Google Drive...</span> <i class="fa-solid fa-spinner fa-spin"></i>';
+
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch('/api/admin/add-property', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          statusDiv.className = 'form-status success';
+          statusDiv.textContent = result.message;
+          form.reset();
+          filePreview.textContent = '';
+        } else {
+          throw new Error(result.error || 'Failed to upload property listing.');
+        }
+      } catch (error) {
+        statusDiv.className = 'form-status error';
+        statusDiv.textContent = error.message;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+      }
+    });
+  </script>
+</body>
+</html>

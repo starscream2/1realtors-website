@@ -1,45 +1,5 @@
-// --- Mock Properties Data ---
-const properties = [
-  {
-    id: 1,
-    title: "The Horizon Villa",
-    category: "villa",
-    price: 4850000,
-    priceStr: "$4,850,000",
-    location: "Malibu, California",
-    beds: 5,
-    baths: 6,
-    size: 6200,
-    image: "images/luxury_villa.jpg",
-    description: "An architectural masterpiece perched on the cliffs of Malibu. Features panoramic ocean views, a state-of-the-art glass infinity pool, smart-home automation, expansive outdoor terraces, and premium imported stone finishes throughout."
-  },
-  {
-    id: 2,
-    title: "Apex Skyline Penthouse",
-    category: "apartment",
-    price: 2150000,
-    priceStr: "$2,150,000",
-    location: "Manhattan, New York",
-    beds: 3,
-    baths: 3.5,
-    size: 3100,
-    image: "images/modern_penthouse.jpg",
-    description: "Experience high-altitude luxury in this corner penthouse. Floor-to-ceiling windows offer wrapping views of the city skyline. Completed with custom Italian cabinetry, premium appliances, a private climate-controlled wine room, and round-the-clock concierge services."
-  },
-  {
-    id: 3,
-    title: "The Oakwood Craftsman",
-    category: "house",
-    price: 1450000,
-    priceStr: "$1,450,000",
-    location: "Seattle, Washington",
-    beds: 4,
-    baths: 4.5,
-    size: 4500,
-    image: "images/family_home.jpg",
-    description: "A beautifully appointed modern craftsman home blending classic styling with contemporary amenities. Located in a quiet wooded enclave, this home boasts vaulted ceilings, a chefs kitchen, a dedicated home office, and a stunning landscaped backyard patio."
-  }
-];
+// --- Listings Data (Fetched Dynamically) ---
+let properties = [];
 
 // --- DOM Elements ---
 const propertiesGrid = document.getElementById('properties-grid');
@@ -291,7 +251,18 @@ inquiryForm.addEventListener('submit', async (e) => {
 });
 
 // --- Initial Execution ---
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const response = await fetch('/api/properties');
+    if (response.ok) {
+      properties = await response.json();
+    } else {
+      throw new Error("HTTP error: " + response.status);
+    }
+  } catch (error) {
+    console.error("Failed to load listings from Google Sheets:", error);
+    properties = [];
+  }
   renderProperties(properties);
   populateDropdown();
 });

@@ -165,8 +165,8 @@ app.post('/api/inquiry', async (req, res) => {
       '',
       body,
     ];
-    const message = messageParts.join('\n');
-    const encodedMessage = Buffer.from(message)
+    const emailRawContent = messageParts.join('\n');
+    const encodedMessage = Buffer.from(emailRawContent)
       .toString('base64')
       .replace(/\+/g, '-')
       .replace(/\//g, '_')

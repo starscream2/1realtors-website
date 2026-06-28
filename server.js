@@ -45,6 +45,20 @@ async function getGoogleAuth() {
   }
 }
 
+// Helper to parse alphanumeric prices (e.g. "2.75 million" -> 2750000) for client filtering
+function parsePriceStringToNumber(priceStr) {
+  if (!priceStr) return 0;
+  // Clean string: remove commas, dollar signs, spaces, currency codes, and "/month"
+  let cleaned = priceStr.toLowerCase().replace(/[\$,\s\/month|ttd|usd]/g, '').trim();
+  
+  if (cleaned.includes('million') || cleaned.includes('mil') || cleaned.includes('m')) {
+    let numPart = parseFloat(cleaned.replace(/[a-z]/g, ''));
+    return (numPart * 1000000) || 0;
+  }
+  
+  return parseFloat(cleaned) || 0;
+}
+
 // Helper to read local config details
 async function getDbConfig() {
   try {
@@ -75,13 +89,26 @@ app.get('/api/properties', async (req, res) => {
 
     const properties = rows.map(row => {
       const currency = row[10] || 'TTD';
-      const priceVal = parseInt(row[3]) || 0;
+      const rawPrice = (row[3] || '0').trim();
+      
+      const priceVal = parsePriceStringToNumber(rawPrice);
+      
+      let displayPrice = rawPrice;
+      if (!displayPrice.includes('$')) {
+        // If it's a plain number (e.g. "12000"), format it with commas
+        const cleanNum = parseFloat(displayPrice.replace(/,/g, ''));
+        if (!isNaN(cleanNum)) {
+          displayPrice = cleanNum.toLocaleString();
+        }
+        displayPrice = `${currency} $${displayPrice}`;
+      }
+      
       return {
         id: parseInt(row[0]),
         title: row[1] || 'No Title',
         category: row[2] || 'house',
-        price: priceVal,
-        priceStr: `${currency} $${priceVal.toLocaleString()}`,
+        price: priceVal, // Send the parsed numeric value for filter comparisons
+        priceStr: displayPrice,
         location: row[4] || 'Unknown Location',
         beds: parseInt(row[5]) || 0,
         baths: parseFloat(row[6]) || 0,
@@ -219,7 +246,7 @@ app.post('/api/admin/add-property', upload.single('image'), async (req, res) => 
       nextId,
       title,
       category,
-      parseInt(price),
+      price, // Store raw alphanumeric price string (e.g. "2.75 million")
       location,
       parseInt(beds),
       parseFloat(baths),

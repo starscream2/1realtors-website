@@ -19,7 +19,7 @@ async function sendInquiryEmail(inquiry) {
   try {
     let tokenContent;
     if (process.env.GMAIL_TOKEN_JSON) {
-      tokenContent = process.env.GMAIL_TOKEN_JSON;
+      tokenContent = process.env.GMAIL_TOKEN_JSON.replace(/[\n\r]/g, '').trim();
     } else {
       tokenContent = await fs.readFile(TOKEN_PATH, 'utf8');
     }

@@ -158,17 +158,18 @@ h2 {
 }
 
 .logo {
-  font-family: var(--font-display);
-  font-size: 1.6rem;
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: 1.8rem;
+  font-weight: 800;
   color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.5px;
 }
 
-.logo-accent {
+.logo-text-red {
   color: var(--color-accent);
-  font-family: var(--font-body);
-  font-weight: 300;
-  margin-right: 2px;
 }
 
 .nav-links {

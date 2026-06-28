@@ -1,9 +1,9 @@
-/* --- Design Tokens & Variables (Inspired by MD3 & Approachable/All-Inclusive Real Estate) --- */
+/* --- Design Tokens & Variables (Inspired by MD3 & #1 Realtors Brand) --- */
 :root {
-  --color-primary: #1E3A8A;      /* Trustworthy Blue */
-  --color-secondary: #0F172A;    /* Approachable Deep Charcoal */
-  --color-accent: #0D9488;       /* Welcoming Teal */
-  --color-accent-hover: #0F766E; /* Darker Teal */
+  --color-primary: #1F2937;      /* Approachable Charcoal */
+  --color-secondary: #111827;    /* Deep Charcoal / Black */
+  --color-accent: #E53E3E;       /* #1 Realtors Brand Red */
+  --color-accent-hover: #C53030; /* Darker Red */
   --color-bg: #FAFAFC;           /* Off-White Cream */
   --color-surface: #FFFFFF;      /* Clean White */
   --color-text-main: #2C3E50;    /* Charcoal Text */
@@ -226,7 +226,7 @@ h2 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, rgba(30, 58, 138, 0.8) 0%, rgba(13, 148, 136, 0.55) 100%);
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.85) 0%, rgba(229, 62, 62, 0.45) 100%);
 }
 
 .hero-content {
@@ -952,4 +952,60 @@ footer {
 .thumb-img.active {
   opacity: 1;
   border-color: var(--color-accent);
+}
+
+/* --- Founder Section --- */
+.founder-section {
+  padding: 6rem 0;
+  background-color: var(--color-bg);
+}
+
+.founder-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.founder-image-wrapper {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.founder-image-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.founder-subtitle {
+  font-size: 1.1rem;
+  color: var(--color-accent);
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.founder-quote {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.25rem;
+  color: var(--color-secondary);
+  border-left: 4px solid var(--color-accent);
+  padding-left: 1.5rem;
+  margin-top: 2rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 992px) {
+  .founder-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  .founder-image-wrapper {
+    max-width: 500px;
+    margin: 0 auto;
+  }
 }

@@ -169,22 +169,12 @@ h2 {
   text-decoration: none;
 }
 
-.logo i {
-  color: var(--color-accent);
-  font-size: 1.7rem;
-  transition: font-size var(--transition-fast);
-}
-
 .logo-text-red {
   color: var(--color-accent);
 }
 
 #main-header.scrolled .logo {
   font-size: 1.5rem;
-}
-
-#main-header.scrolled .logo i {
-  font-size: 1.4rem;
 }
 
 .nav-links {

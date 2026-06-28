@@ -23,7 +23,16 @@ async function sendInquiryEmail(inquiry) {
     } else {
       tokenContent = await fs.readFile(TOKEN_PATH, 'utf8');
     }
-    const auth = google.auth.fromJSON(JSON.parse(tokenContent));
+    
+    const tokenObj = JSON.parse(tokenContent);
+    // Sanitize accidental whitespace introduced by copy-paste (except in scope)
+    for (const key in tokenObj) {
+      if (typeof tokenObj[key] === 'string' && key !== 'scope') {
+        tokenObj[key] = tokenObj[key].replace(/\s+/g, '');
+      }
+    }
+    
+    const auth = google.auth.fromJSON(tokenObj);
     const gmail = google.gmail({ version: 'v1', auth });
 
     const subject = `[Real Estate Lead] New Inquiry for ${inquiry.propertyTitle}`;
